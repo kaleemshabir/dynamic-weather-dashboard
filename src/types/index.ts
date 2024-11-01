@@ -3,6 +3,7 @@ export interface WeatherData {
   temperature: number;
   minTemp: number;
   maxTemp: number;
+  currentTemp: number;
   humidity: number;
   windSpeed: number;
   description: string;
