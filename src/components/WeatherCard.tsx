@@ -5,6 +5,7 @@ import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import AirIcon from "@mui/icons-material/Air";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import { capitalizeFirstLetter } from "../utils/common";
 
 interface WeatherCardProps {
   city: string;
@@ -29,11 +30,23 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
   onDelete,
 }) => {
   return (
-    <Card sx={{ borderRadius: 2, width: "300px", cursor: "pointer" }}>
+    <Card
+      sx={{
+        borderRadius: 2,
+        width: "300px",
+        cursor: "pointer",
+        boxShadow: 3,
+        "&:hover": {
+          boxShadow: 6,
+          transform: "scale(1.03)",
+          transition: "transform 0.2s ease-in-out",
+        },
+      }}
+    >
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6" gutterBottom>
-            {city}
+            {capitalizeFirstLetter(city)}
           </Typography>
           <IconButton onClick={onDelete} color="error">
             <DeleteIcon />

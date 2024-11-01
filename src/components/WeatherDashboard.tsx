@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Typography,
   CircularProgress,
@@ -16,15 +16,40 @@ import { fetchWeatherData } from "../services/weatherService";
 const WeatherDashboard = () => {
   const { state, dispatch } = useWeatherContext();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const storedWeatherData = JSON.parse(
+      localStorage.getItem("weatherData") || "[]"
+    );
+    if (storedWeatherData.length) {
+      dispatch({
+        type: WeatherActionType.SET_WEATHER_DATA,
+        payload: storedWeatherData,
+      });
+    }
+  }, []);
+
   const handleAddCity = async (city: string) => {
-    dispatch({ type: WeatherActionType.ADD_CITY, payload: city });
+    if (
+      state.weatherData.some(
+        (data) => data.city.toLowerCase() === city.toLowerCase()
+      )
+    ) {
+      setError("City is already added!");
+      setOpen(true);
+      return;
+    }
+
     try {
       setLoading(true);
 
       const data = await fetchWeatherData(city);
-      dispatch({ type: WeatherActionType.SET_WEATHER_DATA, payload: data });
+      dispatch({ type: WeatherActionType.ADD_CITY, payload: data });
+
+      const updatedState = [...state.weatherData, data];
+      localStorage.setItem("weatherData", JSON.stringify(updatedState));
     } catch (error: any) {
       setOpen(true);
       setError(error.message);
@@ -34,6 +59,9 @@ const WeatherDashboard = () => {
   };
 
   const handleRemoveCity = (city: string) => {
+    const updatedState = state.weatherData.filter((data) => data.city !== city);
+
+    localStorage.setItem("weatherData", JSON.stringify(updatedState));
     dispatch({ type: WeatherActionType.REMOVE_CITY, payload: city });
   };
 
@@ -50,11 +78,13 @@ const WeatherDashboard = () => {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <Typography variant="h4" gutterBottom>
-        Dynamic Weather Dashboard
-      </Typography>
       <Box display="flex" justifyContent="center" mt={2}>
-        <SearchBar onAddCity={handleAddCity} />
+        <Typography variant="h4" gutterBottom>
+          Dynamic Weather Dashboard
+        </Typography>
+      </Box>
+      <Box display="flex" justifyContent="center" mt={2}>
+        <SearchBar onAddCity={handleAddCity} loading={loading} />
       </Box>
       {(state.loading || loading) && (
         <Box display="flex" justifyContent="center" mt={2}>
@@ -62,21 +92,30 @@ const WeatherDashboard = () => {
         </Box>
       )}
 
-      <Grid2 container spacing={2} mt={2} component="div">
+      <Grid2
+        container
+        spacing={2}
+        mt={2}
+        component="div"
+        justifyContent="center"
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
         {state.weatherData.map((weatherData, index) => (
-          <Grid2 key={index} component="div">
-            <WeatherCard
-              city={weatherData.city}
-              temperature={weatherData.temperature}
-              minTemp={weatherData.minTemp}
-              maxTemp={weatherData.maxTemp}
-              currentTemp={weatherData.currentTemp}
-              humidity={weatherData.humidity}
-              windSpeed={weatherData.windSpeed}
-              description={weatherData.description}
-              onDelete={() => handleRemoveCity(weatherData.city)}
-            />
-          </Grid2>
+          <WeatherCard
+            key={index}
+            city={weatherData.city}
+            temperature={weatherData.temperature}
+            minTemp={weatherData.minTemp}
+            maxTemp={weatherData.maxTemp}
+            currentTemp={weatherData.currentTemp}
+            humidity={weatherData.humidity}
+            windSpeed={weatherData.windSpeed}
+            description={weatherData.description}
+            onDelete={() => handleRemoveCity(weatherData.city)}
+          />
         ))}
       </Grid2>
 
