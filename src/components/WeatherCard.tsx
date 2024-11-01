@@ -48,7 +48,13 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
           <Typography variant="h6" gutterBottom>
             {capitalizeFirstLetter(city)}
           </Typography>
-          <IconButton onClick={onDelete} color="error">
+          <IconButton
+            onClick={onDelete}
+            color="error"
+            sx={{
+              marginBottom: "10px",
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         </Box>
