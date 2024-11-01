@@ -18,10 +18,16 @@ A responsive weather dashboard application that allows users to search for citie
 
 ## Setup Instructions
 
+2. **Get openweatherapi key and put it in .env after cloning the repo **:
+```
+VITE_OPENWEATHER_API_KEY=your-key-value
+
+```
+
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/kaleemshabir/dynamic-weather-dashboard.git
-   cd weather-dashboard
+   cd dynamic-weather-dashboard
    npm install
    npm run build
    npm run preview
