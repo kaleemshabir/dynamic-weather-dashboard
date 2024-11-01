@@ -1,50 +1,28 @@
-# React + TypeScript + Vite
+# Weather Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive weather dashboard application that allows users to search for cities and view their weather forecast. The app is built with [Vite](https://vitejs.dev/) for fast development and is powered by the [OpenWeatherMap API](https://openweathermap.org/). It also includes features such as city list persistence, dark mode, and error handling.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Search Weather by City**: Users can search for weather forecasts by entering a city name.
+- **City List with Forecast**: Displays a list of saved cities with their current weather data.
+- **Delete City from List**: Users can remove cities from the list to manage their dashboard.
+- **Data Persistence**: Weather data is saved to `localStorage`, so the list persists even after page reloads.
+- **Loading Indicator**: Shows a loader when fetching weather data to enhance user experience.
+- **Error Handling**: Displays relevant errors if the city weather is already present or if the city is not found.
+- **Dark Mode**: Option to toggle between light and dark themes for better readability.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## Setup Instructions
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/kaleemshabir/dynamic-weather-dashboard.git
+   cd weather-dashboard
+   npm install
+   npm run build
+   npm run preview
+   ```
