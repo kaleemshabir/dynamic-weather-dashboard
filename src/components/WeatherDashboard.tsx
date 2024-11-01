@@ -3,18 +3,26 @@ import {
   Typography,
   CircularProgress,
   Box,
-  Grid2,
   Alert,
   Snackbar,
+  useTheme,
+  Grid2,
+  IconButton,
 } from "@mui/material";
 import WeatherCard from "./WeatherCard";
 import SearchBar from "./SearchBar";
 import { useWeatherContext } from "../context/WeatherContext";
 import { WeatherActionType } from "../context/weatherReducer";
 import { fetchWeatherData } from "../services/weatherService";
+import { useThemeContext } from "../context/ThemeContext";
+
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const WeatherDashboard = () => {
+  const theme = useTheme();
   const { state, dispatch } = useWeatherContext();
+  const { isDarkMode, toggleTheme } = useThemeContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
@@ -29,7 +37,7 @@ const WeatherDashboard = () => {
         payload: storedWeatherData,
       });
     }
-  }, []);
+  }, [dispatch]);
 
   const handleAddCity = async (city: string) => {
     if (
@@ -44,15 +52,15 @@ const WeatherDashboard = () => {
 
     try {
       setLoading(true);
-
       const data = await fetchWeatherData(city);
       dispatch({ type: WeatherActionType.ADD_CITY, payload: data });
-
-      const updatedState = [...state.weatherData, data];
-      localStorage.setItem("weatherData", JSON.stringify(updatedState));
+      localStorage.setItem(
+        "weatherData",
+        JSON.stringify([...state.weatherData, data])
+      );
     } catch (error: any) {
-      setOpen(true);
       setError(error.message);
+      setOpen(true);
     } finally {
       setLoading(false);
     }
@@ -65,44 +73,77 @@ const WeatherDashboard = () => {
     dispatch({ type: WeatherActionType.REMOVE_CITY, payload: city });
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   return (
     <Grid2
       container
       padding={3}
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      justifyContent={"center"}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        minHeight: "100vh",
+      }}
     >
-      <Box display="flex" justifyContent="center" mt={2}>
-        <Typography variant="h4" gutterBottom>
-          Dynamic Weather Dashboard
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        mt={2}
+        sx={{
+          gap: 2,
+          "@media (max-width:600px)": {
+            flexDirection: "column",
+          },
+        }}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontWeight: "bold",
+            color: isDarkMode ? "grey.100" : "grey.900",
+            transition: "color 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          Weather Dashboard
         </Typography>
+        <IconButton
+          onClick={toggleTheme}
+          color="inherit"
+          sx={{
+            p: 1,
+            transition: "all 0.3s ease",
+            fontSize: "1.5rem",
+            marginBottom: "12px",
+            "&:hover": {
+              backgroundColor: isDarkMode ? "grey.700" : "grey.300",
+            },
+          }}
+        >
+          {isDarkMode ? (
+            <Brightness7Icon fontSize="inherit" />
+          ) : (
+            <Brightness4Icon fontSize="inherit" />
+          )}
+        </IconButton>
       </Box>
+
       <Box display="flex" justifyContent="center" mt={2}>
         <SearchBar onAddCity={handleAddCity} loading={loading} />
       </Box>
-      {(state.loading || loading) && (
+      {loading && (
         <Box display="flex" justifyContent="center" mt={2}>
           <CircularProgress />
         </Box>
       )}
-
-      <Grid2
-        container
-        spacing={2}
-        mt={2}
-        component="div"
-        justifyContent="center"
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-        }}
-      >
+      <Grid2 container spacing={2} mt={2} justifyContent="center">
         {state.weatherData.map((weatherData, index) => (
           <WeatherCard
             key={index}
@@ -118,19 +159,8 @@ const WeatherDashboard = () => {
           />
         ))}
       </Grid2>
-
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" variant="filled">
           {error}
         </Alert>
       </Snackbar>
