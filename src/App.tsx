@@ -1,7 +1,7 @@
 import "./App.css";
-
+import WeatherDashboard from "./components/WeatherDashboard";
 function App() {
-  return <div>Weather Dashboard</div>;
+  return <WeatherDashboard />;
 }
 
 export default App;
